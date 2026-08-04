@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Sitemap: https://pomyjo.com/regret-spending-log/sitemap.xml
+Sitemap: https://pomyjo.com/regret-spending-log/rss.xml
