@@ -1,4 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://pomyjo.com/regret-spending-log/sitemap.xml
-Sitemap: https://pomyjo.com/regret-spending-log/rss.xml
+Sitemap: https://regret-spending-log.pomyjo.com/sitemap.xml
