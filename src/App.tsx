@@ -24,6 +24,8 @@ export function App() {
   const [tab, setTab] = useState<'survey' | 'publicFeed' | 'comments'>('survey');
   const [currentIdx, setCurrentIdx] = useState(0);
   const [result, setResult] = useState<any>(null);
+  // Store each answer score (5‑1) to calculate a total later
+  const [answers, setAnswers] = useState<number[]>([]);
 
   // Live Community Data
   const [publicShares, setPublicShares] = useState<ApiComment[]>([]);
@@ -62,17 +64,41 @@ export function App() {
     textEn: `Item ${i + 1}: Behavioral & diagnostic assessment.`
   }));
 
-  const handleAnswer = () => {
+  const handleAnswer = (score: number) => {
+    // Record the chosen score
+    setAnswers(prev => [...prev, score]);
     if (currentIdx + 1 < questions.length) {
       setCurrentIdx(currentIdx + 1);
     } else {
-      setResult({
+      // All questions answered – compute total score and select an archetype
+      const totalScore = answers.reduce((a, b) => a + b, 0) + score; // include the last answer
+      let archetype = {
         nameKo: "분석형 완벽주의자 (Analytical Perfectionist)",
         nameEn: "Analytical Perfectionist",
         emoji: "📊",
         descKo: "데이터와 정밀성을 추구하며 완벽한 결과를 위해 최선을 다하는 유형입니다.",
         descEn: "High-precision archetype focused on quality and rigorous data accuracy."
-      });
+      };
+      if (totalScore >= 80) {
+        // keep default
+      } else if (totalScore >= 60) {
+        archetype = {
+          nameKo: "절제형 실용주의자 (Practical Saver)",
+          nameEn: "Practical Saver",
+          emoji: "💡",
+          descKo: "효율적인 지출 관리와 목표 달성을 중시하는 실용주의자 유형입니다.",
+          descEn: "A pragmatic saver who values efficient spending and goal achievement."
+        };
+      } else {
+        archetype = {
+          nameKo: "감성형 소비자 (Emotional Spender)",
+          nameEn: "Emotional Spender",
+          emoji: "❤",
+          descKo: "감정에 따라 소비가 좌우되는 유형으로, 후회 감소를 위한 감정 관리가 필요합니다.",
+          descEn: "A spender driven by emotions; emotional regulation helps reduce regret."
+        };
+      }
+      setResult(archetype);
     }
   };
 
@@ -168,7 +194,11 @@ export function App() {
                 <h2 className="text-lg font-bold text-white mb-6">{questions[currentIdx].textKo}</h2>
                 <div className="grid gap-2.5">
                   {[5, 4, 3, 2, 1].map((s, i) => (
-                    <button key={i} onClick={handleAnswer} className="p-3.5 bg-slate-950 border border-slate-800 hover:border-indigo-500 rounded-xl text-xs text-left text-slate-200 transition">
+                    <button
+                      key={i}
+                      onClick={() => handleAnswer(s)}
+                      className="p-3.5 bg-slate-950 border border-slate-800 hover:border-indigo-500 rounded-xl text-xs text-left text-slate-200 transition transform hover:scale-105 duration-200"
+                    >
                       {s === 5 ? "매우 그렇다 (Strongly Agree)" : s === 4 ? "그렇다 (Agree)" : s === 3 ? "보통이다 (Neutral)" : s === 2 ? "그렇지 않다 (Disagree)" : "전혀 그렇지 않다 (Strongly Disagree)"}
                     </button>
                   ))}
@@ -183,10 +213,17 @@ export function App() {
                   <p className="text-xs text-slate-300 max-w-md mx-auto">{result.descKo}</p>
                 </div>
 
+                <div className="space-y-4 text-left">
+                  <div className="bg-slate-950 p-4 rounded-xl border border-slate-800">
+                    <h4 className="text-indigo-400 font-bold text-xs mb-2">💡 전문가 인사이트</h4>
+                    <p className="text-xs text-slate-400 leading-relaxed">이 유형은 효율적인 자원 배분을 선호하며, 장기적인 투자 관점에서 소비를 결정하는 경향이 강합니다. 계획적인 가계부 관리가 큰 자산이 될 것입니다.</p>
+                  </div>
+                </div>
+
                 {/* Online Result Share Box */}
                 <div className="p-4 bg-slate-950 border border-slate-800 rounded-xl text-left space-y-3">
                   <h3 className="text-xs font-bold text-indigo-400 flex items-center gap-1">
-                    <Share2 className="w-3.5 h-3.5" /> 이 결과를 다른 접속자들과 실시간 공유하기
+                    <Share2 className="w-3.5 h-3.5" /> 결과 공유 및 커뮤니티 의견 남기기
                   </h3>
                   <input
                     type="text"
@@ -202,8 +239,8 @@ export function App() {
                     onChange={e => setShareNote(e.target.value)}
                     className="w-full bg-slate-900 border border-slate-800 rounded-lg p-2 text-xs text-white"
                   />
-                  <button onClick={handleShareResult} className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg text-xs transition">
-                    라이브 피드에 내 진단 결과 등록하기 🚀
+                  <button onClick={handleShareResult} className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg text-xs transition shadow-lg shadow-indigo-600/20">
+                    진단 결과 저장하고 커뮤니티 공유하기 ✨
                   </button>
                 </div>
               </div>
