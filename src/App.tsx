@@ -313,8 +313,28 @@ export function App() {
         )}
       </main>
 
-      <footer className="border-t border-slate-800 py-4 text-center text-[10px] text-slate-500">
-        © 2026 regret-spending-log. Live Online Community Connected. Powered by Pomyjo.
+            <footer className="border-t border-slate-800 py-5 text-center">
+        <div className="flex flex-col items-center gap-2">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => {
+                const url = location.href;
+                if (navigator.share) { navigator.share({ title: document.title, url }); }
+                else { navigator.clipboard?.writeText(url).then(() => alert('링크가 복사되었습니다! 공유해보세요 🎉')); }
+              }}
+              className="px-4 py-1.5 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white text-[11px] font-bold transition"
+            >
+              📤 결과 공유하기
+            </button>
+            <a
+              href="https://hub.pomyjo.com"
+              className="px-4 py-1.5 rounded-full border border-slate-700 hover:border-indigo-500 text-slate-300 hover:text-white text-[11px] font-bold transition"
+            >
+              🧠 더 많은 진단 테스트
+            </a>
+          </div>
+          <p className="text-[10px] text-slate-500">© 2026 POMYJO · <a href="https://hub.pomyjo.com" className="hover:text-slate-300">POMYJO 진단 허브</a> · 결과는 참고용입니다</p>
+        </div>
       </footer>
       {/* SEO 본문 */}
       <div style={{maxWidth:720,margin:'48px auto 0',padding:'0 24px'}}>
